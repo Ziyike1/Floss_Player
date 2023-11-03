@@ -12,16 +12,5 @@ class BookList {
             throw IndexOutOfBoundsException("Index: $index, Size: ${books.size}")
         }
     }
-
-    fun remove(book: Book) {
-        books.remove(book)
-    }
-
     fun size(): Int = books.size
-
-    override fun toString(): String {
-        return books.joinToString(separator = "\n") { book ->
-            "Title: ${book.title}, Author: ${book.author}"
-        }
-    }
 }

@@ -2,27 +2,60 @@ package edu.temple.flossplayer
 
 import Book
 import android.os.Bundle
+import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var bookViewModel: BookViewModel
+    private var detailContainer: FrameLayout? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Obtain the ViewModel - ViewModelProviders is deprecated so we use ViewModelProvider
-        bookViewModel = ViewModelProvider(this).get(BookViewModel::class.java)
+        bookViewModel = ViewModelProvider(this)[BookViewModel::class.java]
+
+        detailContainer = findViewById(R.id.container2)
 
         if (savedInstanceState == null) {
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.container, BookListFragment())
-                .commitNow()
+            if (detailContainer != null) {
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.container1, BookListFragment())
+                    .commit()
+
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.container2, BookPlayerFragment())
+                    .commit()
+            } else {
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.container, BookListFragment())
+                    .commit()
+            }
         }
 
         populateBookList()
+        setupBookSelectionListener()
+    }
+
+    private fun setupBookSelectionListener() {
+        bookViewModel.selectedIndex.observe(this) { index ->
+            if (index != -1) {
+                val selectedBook = bookViewModel.getSelectedBook()
+                if (detailContainer != null) {
+                    if (selectedBook != null) {
+                        (supportFragmentManager.findFragmentById(R.id.container2) as? BookPlayerFragment)
+                            ?.displaySelectedBook(selectedBook)
+                    }
+                } else {
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.container, BookPlayerFragment())
+                        .addToBackStack(null) // Allows user to reverse the operation
+                        .commit()
+                }
+            }
+        }
     }
 
     private fun populateBookList() {
@@ -39,7 +72,6 @@ class MainActivity : AppCompatActivity() {
             Book("Animal Farm", "George Orwell")
         )
 
-        // Since we are directly interacting with the ViewModel, we must do so on the main thread
         runOnUiThread {
             myBooks.forEach { book ->
                 bookViewModel.addBook(book)

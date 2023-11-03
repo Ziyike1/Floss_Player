@@ -1,19 +1,26 @@
 package edu.temple.flossplayer
 
 import Book
-import BookList
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var bookList: BookList
+    private lateinit var bookViewModel: BookViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        bookList = BookList()
+        // Obtain the ViewModel - ViewModelProviders is deprecated so we use ViewModelProvider
+        bookViewModel = ViewModelProvider(this).get(BookViewModel::class.java)
+
+        if (savedInstanceState == null) {
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.container, BookListFragment())
+                .commitNow()
+        }
 
         populateBookList()
     }
@@ -32,6 +39,11 @@ class MainActivity : AppCompatActivity() {
             Book("Animal Farm", "George Orwell")
         )
 
-        myBooks.forEach { bookList.add(it) }
+        // Since we are directly interacting with the ViewModel, we must do so on the main thread
+        runOnUiThread {
+            myBooks.forEach { book ->
+                bookViewModel.addBook(book)
+            }
+        }
     }
 }

@@ -1,7 +1,7 @@
 package edu.temple.flossplayer
 
-import Book
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -35,14 +35,19 @@ class BookPlayerFragment : Fragment() {
     }
 
     fun displaySelectedBook(book: Book) {
-        val bookFragment = childFragmentManager.findFragmentById(R.id.book_fragment_container) as? BookFragment
-            ?: BookFragment().also {
-                childFragmentManager.beginTransaction()
-                    .add(R.id.book_fragment_container, it)
-                    .commit()
-            }
-
-        bookFragment.displayBook(book)
+        try {
+            val bookFragment = childFragmentManager.findFragmentById(R.id.book_fragment_container) as? BookFragment
+                ?: BookFragment().also {
+                    childFragmentManager.beginTransaction()
+                        .add(R.id.book_fragment_container, it)
+                        .commit()
+                }
+            childFragmentManager.executePendingTransactions()
+            bookFragment.displayBook(book)
+        } catch (e: Exception) {
+            Log.e("BookPlayerFragment", "Error displaying selected book", e)
+        }
     }
+
 }
 

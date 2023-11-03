@@ -1,6 +1,5 @@
 package edu.temple.flossplayer
 
-import Book
 import BookList
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

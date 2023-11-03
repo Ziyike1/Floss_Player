@@ -1,6 +1,5 @@
 package edu.temple.flossplayer
 
-import Book
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -49,7 +48,6 @@ class BookListAdapter(
     fun updateBooks(newBooks: List<Book>) {
         books.clear()
         books.addAll(newBooks)
-        notifyDataSetChanged()
     }
 }
 

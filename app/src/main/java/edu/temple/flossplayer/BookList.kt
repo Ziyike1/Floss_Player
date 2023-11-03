@@ -1,3 +1,5 @@
+import edu.temple.flossplayer.Book
+
 class BookList {
     private val books: MutableList<Book> = mutableListOf()
 

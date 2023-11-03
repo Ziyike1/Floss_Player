@@ -4,7 +4,7 @@ class BookList {
     fun add(book: Book) {
         books.add(book)
     }
-
+    fun getBooks(): List<Book> = books
     fun get(index: Int): Book {
         if (index in books.indices) {
             return books[index]

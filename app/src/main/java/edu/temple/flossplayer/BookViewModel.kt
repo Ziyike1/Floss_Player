@@ -2,18 +2,31 @@ package edu.temple.flossplayer
 
 import Book
 import BookList
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
 class BookViewModel : ViewModel() {
-    private val bookList = BookList()
 
-    fun getBooks() = bookList
+    private val _bookList = MutableLiveData<BookList>().apply { value = BookList() }
+    val bookList: LiveData<BookList>
+        get() = _bookList
+
+    private val _selectedIndex = MutableLiveData<Int>()
+    val selectedIndex: LiveData<Int>
+        get() = _selectedIndex
 
     fun addBook(book: Book) {
-        bookList.add(book)
+        _bookList.value?.add(book)
+        _bookList.postValue(_bookList.value)
     }
 
-    fun getBook(index: Int): Book {
-        return bookList.get(index)
+    fun setSelectedIndex(index: Int) {
+        _selectedIndex.value = index
+    }
+
+    fun getSelectedBook(): Book? {
+        return _bookList.value?.get(_selectedIndex.value ?: -1)
     }
 }
+

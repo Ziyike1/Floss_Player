@@ -25,7 +25,10 @@ class BookFragment : Fragment() {
     }
 
     fun displayBook(book: Book) {
-        bookTitleTextView.text = book.title
-        bookAuthorTextView.text = book.author
+        if (isAdded) {
+            bookTitleTextView.text = book.title
+            bookAuthorTextView.text = book.author
+        }
     }
+
 }
